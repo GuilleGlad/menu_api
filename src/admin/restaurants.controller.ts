@@ -15,11 +15,16 @@ import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
+import { AdminMenusService } from './menus.service';
+import { CreateMenuDto } from './dto/create-menu.dto';
 
 @Controller({ path: 'admin', version: '1' })
 @UseGuards(AdminAuthGuard, RolesGuard)
 export class RestaurantsAdminController {
-  constructor(private readonly service: PublicService) {}
+  constructor(
+    private readonly service: PublicService,
+    private readonly menus: AdminMenusService,
+  ) {}
 
   @Get('restaurants')
   @Roles('admin')
@@ -55,5 +60,18 @@ export class RestaurantsAdminController {
     const ok = await this.service.adminDeleteRestaurant(id);
     if (!ok) throw new NotFoundException();
     return { ok: true };
+  }
+
+  // Menus for a restaurant
+  @Get('restaurants/:id/menus')
+  @Roles('admin')
+  listMenus(@Param('id') id: string) {
+    return this.menus.listMenusForRestaurant(id);
+  }
+
+  @Post('restaurants/:id/menus')
+  @Roles('admin')
+  createMenu(@Param('id') id: string, @Body() body: CreateMenuDto) {
+    return this.menus.createMenuForRestaurant(id, body);
   }
 }

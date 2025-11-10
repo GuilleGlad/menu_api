@@ -1,10 +1,15 @@
 import { Module } from '@nestjs/common';
 import { RestaurantsAdminController } from './restaurants.controller';
+import { MenusAdminController } from './menus.controller';
 import { PublicModule } from '../public/public.module';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/user.entity';
+import { RestaurantEntity } from '../entities/restaurant.entity';
+import { MenuEntity } from '../entities/menu.entity';
+import { MenuSectionEntity } from '../entities/menu-section.entity';
+import { MenuItemEntity } from '../entities/menu-item.entity';
 import { UsersAdminController } from './users.controller';
 import { UsersAdminService } from './users.service';
 import { JwtModule } from '@nestjs/jwt';
@@ -14,11 +19,14 @@ import { AdminBootstrapService } from './bootstrap.service';
 import { AdminOidcService } from './oidc.service';
 import { AdminDataSeedService } from './data-seed.service';
 import { AdminDataController } from './data.controller';
+import { AdminMenusService } from './menus.service';
+import { AdminMenuSectionsService } from './sections.service';
+import { SectionsAdminController } from './sections.controller';
 
 @Module({
   imports: [
     PublicModule,
-    TypeOrmModule.forFeature([UserEntity]),
+  TypeOrmModule.forFeature([UserEntity, RestaurantEntity, MenuEntity, MenuSectionEntity, MenuItemEntity]),
     JwtModule.register({
       global: false,
       secret: process.env.ADMIN_JWT_SECRET || 'dev-admin-secret',
@@ -27,9 +35,11 @@ import { AdminDataController } from './data.controller';
   ],
   controllers: [
     RestaurantsAdminController,
+    MenusAdminController,
     UsersAdminController,
     AdminAuthController,
     AdminDataController,
+    SectionsAdminController,
   ],
   providers: [
     AdminAuthGuard,
@@ -39,6 +49,8 @@ import { AdminDataController } from './data.controller';
     AdminBootstrapService,
     AdminOidcService,
     AdminDataSeedService,
+    AdminMenusService,
+    AdminMenuSectionsService,
   ],
 })
 export class AdminModule {}
