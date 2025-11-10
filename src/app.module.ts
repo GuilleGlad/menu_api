@@ -17,7 +17,7 @@ import { AdminModule } from './admin/admin.module';
       port: 5432,
       username: 'postgres',
       password: '12345',
-      database: 'postgres',
+      database: 'postgresV2',
       autoLoadEntities: true,
       synchronize: false, // Using existing schema in 'postgres' DB; disable auto sync to avoid FK/PK conflicts
       retryAttempts: 3,

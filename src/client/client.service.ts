@@ -23,11 +23,15 @@ export class ClientService {
     const ttlSeconds = 60 * 60 * 24; // 24h by default
     const expires = new Date(Date.now() + ttlSeconds * 1000).toISOString();
 
-    const restaurant_id = this.restaurants[dto.restaurant_slug] || `unknown:${dto.restaurant_slug}`;
+    const restaurant_id =
+      this.restaurants[dto.restaurant_slug] || `unknown:${dto.restaurant_slug}`;
     const session: Session = {
       token,
       expires_at: expires,
-      context: { restaurant_id, table_id: dto.table_code ? String(dto.table_code) : undefined },
+      context: {
+        restaurant_id,
+        table_id: dto.table_code ? String(dto.table_code) : undefined,
+      },
     };
 
     this.sessions[token] = session;

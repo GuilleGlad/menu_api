@@ -11,6 +11,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { AdminAuthController } from './auth.controller';
 import { AdminAuthService } from './auth.service';
 import { AdminBootstrapService } from './bootstrap.service';
+import { AdminOidcService } from './oidc.service';
+import { AdminDataSeedService } from './data-seed.service';
+import { AdminDataController } from './data.controller';
 
 @Module({
   imports: [
@@ -22,7 +25,20 @@ import { AdminBootstrapService } from './bootstrap.service';
       signOptions: { expiresIn: '2h' },
     }),
   ],
-  controllers: [RestaurantsAdminController, UsersAdminController, AdminAuthController],
-  providers: [AdminAuthGuard, RolesGuard, UsersAdminService, AdminAuthService, AdminBootstrapService],
+  controllers: [
+    RestaurantsAdminController,
+    UsersAdminController,
+    AdminAuthController,
+    AdminDataController,
+  ],
+  providers: [
+    AdminAuthGuard,
+    RolesGuard,
+    UsersAdminService,
+    AdminAuthService,
+    AdminBootstrapService,
+    AdminOidcService,
+    AdminDataSeedService,
+  ],
 })
 export class AdminModule {}

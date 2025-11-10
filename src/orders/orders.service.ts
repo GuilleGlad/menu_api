@@ -1,9 +1,20 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PricingService } from '../pricing/pricing.service';
 
-type OrderStatus = 'draft' | 'open' | 'submitted' | 'preparing' | 'ready' | 'served' | 'canceled';
+type OrderStatus =
+  | 'draft'
+  | 'open'
+  | 'submitted'
+  | 'preparing'
+  | 'ready'
+  | 'served'
+  | 'canceled';
 
 @Injectable()
 export class OrdersService {
@@ -16,7 +27,8 @@ export class OrdersService {
   }
 
   createOrder(dto: CreateOrderDto) {
-    if (!dto.items || dto.items.length === 0) throw new BadRequestException('items_required');
+    if (!dto.items || dto.items.length === 0)
+      throw new BadRequestException('items_required');
 
     const order_id = this.generateId();
     const created_at = new Date().toISOString();
@@ -25,7 +37,12 @@ export class OrdersService {
     // compute pricing via PricingService
     const pricingReq = {
       restaurant_id: dto.restaurant_id,
-      items: dto.items.map((it) => ({ item_id: it.item_id, variant_id: it.variant_id, modifiers: it.modifiers || [], quantity: it.quantity })),
+      items: dto.items.map((it) => ({
+        item_id: it.item_id,
+        variant_id: it.variant_id,
+        modifiers: it.modifiers || [],
+        quantity: it.quantity,
+      })),
       tip: dto.tip,
       coupon_code: dto.coupon_code,
     };
@@ -50,7 +67,12 @@ export class OrdersService {
     };
 
     this.orders[order_id] = order;
-    return { order_id: order.order_id, status: order.status, pricing: order.pricing, expires_at: order.expires_at };
+    return {
+      order_id: order.order_id,
+      status: order.status,
+      pricing: order.pricing,
+      expires_at: order.expires_at,
+    };
   }
 
   getOrder(order_id: string) {
@@ -62,7 +84,8 @@ export class OrdersService {
   updateOrder(order_id: string, dto: UpdateOrderDto) {
     const o = this.orders[order_id];
     if (!o) throw new NotFoundException();
-    if (o.status !== 'draft') throw new BadRequestException('only_draft_editable');
+    if (o.status !== 'draft')
+      throw new BadRequestException('only_draft_editable');
 
     if (dto.items) o.items = dto.items as any;
     if (dto.tip !== undefined) o.tip = dto.tip;
@@ -72,7 +95,12 @@ export class OrdersService {
     // recompute pricing
     const pricingReq = {
       restaurant_id: o.restaurant_id,
-      items: o.items.map((it: any) => ({ item_id: it.item_id, variant_id: it.variant_id, modifiers: it.modifiers || [], quantity: it.quantity })),
+      items: o.items.map((it: any) => ({
+        item_id: it.item_id,
+        variant_id: it.variant_id,
+        modifiers: it.modifiers || [],
+        quantity: it.quantity,
+      })),
       tip: o.tip,
       coupon_code: o.coupon_code,
     };
@@ -86,7 +114,8 @@ export class OrdersService {
   submitOrder(order_id: string) {
     const o = this.orders[order_id];
     if (!o) throw new NotFoundException();
-    if (o.status !== 'draft') throw new BadRequestException('only_draft_can_submit');
+    if (o.status !== 'draft')
+      throw new BadRequestException('only_draft_can_submit');
 
     o.status = 'submitted';
     o.submitted_at = new Date().toISOString();
@@ -99,7 +128,8 @@ export class OrdersService {
   cancelOrder(order_id: string) {
     const o = this.orders[order_id];
     if (!o) throw new NotFoundException();
-    if (o.status === 'canceled' || o.status === 'served') throw new BadRequestException('cannot_cancel');
+    if (o.status === 'canceled' || o.status === 'served')
+      throw new BadRequestException('cannot_cancel');
 
     o.status = 'canceled';
     o.canceled_at = new Date().toISOString();
@@ -112,29 +142,45 @@ export class OrdersService {
     const o = this.orders[order_id];
     console.log(o.status);
     if (!o) throw new NotFoundException();
-    if (o.status !== 'draft') throw new BadRequestException('only_draft_editable');
+    if (o.status !== 'draft')
+      throw new BadRequestException('only_draft_editable');
     o.coupon_code = coupon_code;
     // recompute pricing
     const pricingReq = {
       restaurant_id: o.restaurant_id,
-      items: o.items.map((it: any) => ({ item_id: it.item_id, variant_id: it.variant_id, modifiers: it.modifiers || [], quantity: it.quantity })),
+      items: o.items.map((it: any) => ({
+        item_id: it.item_id,
+        variant_id: it.variant_id,
+        modifiers: it.modifiers || [],
+        quantity: it.quantity,
+      })),
       tip: o.tip,
       coupon_code: o.coupon_code,
     };
     o.pricing = this.pricing.computeQuote(pricingReq as any);
     o.updated_at = new Date().toISOString();
-    o.history.push({ status: 'draft', at: o.updated_at, note: 'coupon_applied' });
+    o.history.push({
+      status: 'draft',
+      at: o.updated_at,
+      note: 'coupon_applied',
+    });
     return o;
   }
 
   updateTip(order_id: string, tip: number) {
     const o = this.orders[order_id];
     if (!o) throw new NotFoundException();
-    if (o.status !== 'draft') throw new BadRequestException('only_draft_editable');
+    if (o.status !== 'draft')
+      throw new BadRequestException('only_draft_editable');
     o.tip = tip;
     const pricingReq = {
       restaurant_id: o.restaurant_id,
-      items: o.items.map((it: any) => ({ item_id: it.item_id, variant_id: it.variant_id, modifiers: it.modifiers || [], quantity: it.quantity })),
+      items: o.items.map((it: any) => ({
+        item_id: it.item_id,
+        variant_id: it.variant_id,
+        modifiers: it.modifiers || [],
+        quantity: it.quantity,
+      })),
       tip: o.tip,
       coupon_code: o.coupon_code,
     };
@@ -144,10 +190,15 @@ export class OrdersService {
     return o;
   }
 
-  listOrders(filter: { status?: string; restaurant_id?: string; table_id?: string }) {
+  listOrders(filter: {
+    status?: string;
+    restaurant_id?: string;
+    table_id?: string;
+  }) {
     const res = Object.values(this.orders).filter((o: any) => {
       if (filter.status && o.status !== filter.status) return false;
-      if (filter.restaurant_id && o.restaurant_id !== filter.restaurant_id) return false;
+      if (filter.restaurant_id && o.restaurant_id !== filter.restaurant_id)
+        return false;
       if (filter.table_id && o.table_id !== filter.table_id) return false;
       return true;
     });

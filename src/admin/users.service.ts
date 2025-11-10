@@ -19,7 +19,9 @@ export class UsersAdminService {
 
     const created: string[] = [];
     for (const a of admins) {
-      const exists = await this.usersRepo.findOne({ where: { email: a.email } });
+      const exists = await this.usersRepo.findOne({
+        where: { email: a.email },
+      });
       if (exists) continue;
       const username = a.email.split('@')[0];
       const entity = this.usersRepo.create({
@@ -28,7 +30,9 @@ export class UsersAdminService {
         password_hash: a.password_hash, // NOTE: plain text for testing only
         role: a.role,
       });
-      this.logger.debug(`Seeding admin user entity: ${JSON.stringify({ username: entity.username, email: entity.email, role: entity.role })}`);
+      this.logger.debug(
+        `Seeding admin user entity: ${JSON.stringify({ username: entity.username, email: entity.email, role: entity.role })}`,
+      );
       await this.usersRepo.save(entity);
       created.push(a.email);
     }

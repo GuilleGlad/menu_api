@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -35,7 +45,10 @@ export class OrdersController {
   }
 
   @Post(':order_id/apply-coupon')
-  applyCoupon(@Param('order_id') order_id: string, @Body() body: { coupon_code: string }) {
+  applyCoupon(
+    @Param('order_id') order_id: string,
+    @Body() body: { coupon_code: string },
+  ) {
     return this.svc.applyCoupon(order_id, body.coupon_code);
   }
 
@@ -45,7 +58,11 @@ export class OrdersController {
   }
 
   @Get()
-  list(@Query('status') status?: string, @Query('restaurant_id') restaurant_id?: string, @Query('table_id') table_id?: string) {
+  list(
+    @Query('status') status?: string,
+    @Query('restaurant_id') restaurant_id?: string,
+    @Query('table_id') table_id?: string,
+  ) {
     return this.svc.listOrders({ status, restaurant_id, table_id });
   }
 }

@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AdminRole, ROLES_KEY } from './roles.decorator';
 
@@ -13,11 +18,15 @@ export class RolesGuard implements CanActivate {
     ]);
     if (!required || required.length === 0) return true;
     const req = context.switchToHttp().getRequest();
-    const role: AdminRole | 'admin' | undefined = req?.admin?.role;
+    const role: string | undefined = req?.admin?.role;
     if (!role) throw new ForbiddenException('admin_role_required');
-    // Treat 'admin' as super-role that can access all
-    if (role === 'admin') return true;
-    if (!required.includes(role)) throw new ForbiddenException('insufficient_role');
+    // Legacy role mapping: treat previous elevated roles as 'admin'.
+    const legacyAdmin = ['owner', 'manager', 'editor', 'viewer'];
+    const effective =
+      role === 'admin' || legacyAdmin.includes(role) ? 'admin' : 'client';
+    if (required.includes('admin') && effective !== 'admin') {
+      throw new ForbiddenException('insufficient_role');
+    }
     return true;
   }
 }

@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { PublicService } from '../public/public.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
@@ -12,37 +22,37 @@ export class RestaurantsAdminController {
   constructor(private readonly service: PublicService) {}
 
   @Get('restaurants')
-  @Roles('viewer', 'editor', 'manager', 'owner')
+  @Roles('admin')
   list() {
     return this.service.adminListRestaurants();
   }
 
   @Post('restaurants')
-  @Roles('editor', 'manager', 'owner')
+  @Roles('admin')
   create(@Body() body: CreateRestaurantDto) {
     return this.service.adminCreateRestaurant(body);
   }
 
   @Get('restaurants/:id')
-  @Roles('viewer', 'editor', 'manager', 'owner')
-  get(@Param('id') id: string) {
-    const r = this.service.adminGetRestaurantById(id);
+  @Roles('admin')
+  async get(@Param('id') id: string) {
+    const r = await this.service.adminGetRestaurantById(id);
     if (!r) throw new NotFoundException();
     return r;
   }
 
   @Patch('restaurants/:id')
-  @Roles('editor', 'manager', 'owner')
-  patch(@Param('id') id: string, @Body() body: UpdateRestaurantDto) {
-    const r = this.service.adminUpdateRestaurant(id, body);
+  @Roles('admin')
+  async patch(@Param('id') id: string, @Body() body: UpdateRestaurantDto) {
+    const r = await this.service.adminUpdateRestaurant(id, body);
     if (!r) throw new NotFoundException();
     return r;
   }
 
   @Delete('restaurants/:id')
-  @Roles('manager', 'owner')
-  remove(@Param('id') id: string) {
-    const ok = this.service.adminDeleteRestaurant(id);
+  @Roles('admin')
+  async remove(@Param('id') id: string) {
+    const ok = await this.service.adminDeleteRestaurant(id);
     if (!ok) throw new NotFoundException();
     return { ok: true };
   }

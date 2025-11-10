@@ -22,7 +22,7 @@ export class AdminBootstrapService implements OnModuleInit {
         username,
         email,
         password_hash: 'owner123', // NOTE: dev only; plain text for quick testing
-        role: 'admin',
+        role: 'admin', // collapsed role model
       });
       await this.usersRepo.save(user);
       this.logger.log(`Seeded default admin user: ${email}`);

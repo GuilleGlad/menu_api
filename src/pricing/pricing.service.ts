@@ -6,15 +6,17 @@ import { CreateQuoteDto } from './dto/quote-request.dto';
 export class PricingService {
   constructor(private readonly publicService: PublicService) {}
 
-  computeQuote(dto: CreateQuoteDto) {
+  async computeQuote(dto: CreateQuoteDto) {
     // find restaurant by id
     console.log(dto);
-    const restaurants = this.publicService.listRestaurants();
+    const restaurants = await this.publicService.listRestaurants();
     const rest = restaurants.find((r) => r.id === dto.restaurant_id);
     if (!rest) return { error: 'restaurant_not_found' };
 
     // get expanded menu
-    const menu = this.publicService.getMenuForFront(rest.slug, { expand: 'sections,items,variants,tags,allergens' });
+    const menu = this.publicService.getMenuForFront(rest.slug, {
+      expand: 'sections,items,variants,tags,allergens',
+    });
     if (!menu || !menu.sections) return { error: 'menu_not_found' };
 
     const lines: any[] = [];
@@ -81,7 +83,10 @@ export class PricingService {
     return {
       lines,
       subtotal,
-      discounts: coupon_discount > 0 ? [{ code: dto.coupon_code, amount: coupon_discount }] : undefined,
+      discounts:
+        coupon_discount > 0
+          ? [{ code: dto.coupon_code, amount: coupon_discount }]
+          : undefined,
       taxes,
       service_charge: service_charge || undefined,
       tip: tip || undefined,
