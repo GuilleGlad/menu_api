@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn, OneToMany } from 'typeorm';
 import { MenuEntity } from './menu.entity';
-import { MenuItemEntity } from './menu-item.entity';
+import { MenuItemSectionEntity } from './menu-item-section.entity';
 
 @Entity('menu_sections')
 export class MenuSectionEntity {
@@ -30,6 +30,7 @@ export class MenuSectionEntity {
   menu?: MenuEntity;
 
   // optional reverse relation to satisfy MenuItemEntity's ManyToOne callback signature
-  @OneToMany(() => MenuItemEntity, (i) => i.section)
-  items?: MenuItemEntity[];
+  @OneToMany(() => MenuItemSectionEntity, (i) => i.section)
+  @JoinColumn({ name: 'id' })
+  items?: MenuItemSectionEntity[];
 }

@@ -51,6 +51,7 @@ export class MenusAdminController {
   ) {
     this.validateUuid(id, 'menu_id');
     const arr = body?.section_ids || [];
+    if (!Array.isArray(arr)) throw new BadRequestException('section_ids_invalid');
     // basic client-side validation of UUIDs to prevent 22P02
     arr.forEach((sid, i) => {
       if (!this.isUuid(sid)) throw new BadRequestException(`section_ids[${i}]_invalid`);

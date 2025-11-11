@@ -1,24 +1,27 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { MenuSectionEntity } from './menu-section.entity';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { MenuItemSectionEntity } from './menu-item-section.entity';
 
 @Entity('menu_items')
 export class MenuItemEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'uuid' })
-  section_id!: string;
+  @Column({ name: 'restaurant_id', type: 'uuid' })
+  restaurant_id!: string;
 
-  @Column({ type: 'text' })
+  @Column({ name: 'name', type: 'text' })
   name!: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'description', type: 'text', nullable: true })
   description!: string | null;
 
-  @Column({ type: 'integer', default: 0 })
-  price_cents!: number;
+  @Column({ name: "currency_code", type: "char", length: 3})
+  currency_code!: string;
 
-  @Column({ type: 'integer', default: 0 })
+  @Column({ name: "is_available", type: "bool", default: true})
+  is_available!: boolean;
+
+  @Column({ name: 'sort_order', type: 'integer', default: 0 })
   sort_order!: number;
 
   @CreateDateColumn({ type: 'timestamp without time zone', name: 'created_at' })
@@ -27,6 +30,7 @@ export class MenuItemEntity {
   @UpdateDateColumn({ type: 'timestamp without time zone', name: 'updated_at' })
   updated_at!: Date;
 
-  @ManyToOne(() => MenuSectionEntity, (s) => s.items, { onDelete: 'CASCADE' })
-  section?: MenuSectionEntity;
+  @OneToMany(() => MenuItemSectionEntity, (mis) => mis.item)
+  @JoinColumn({ name: 'id' })
+  items?: MenuItemSectionEntity[];
 }

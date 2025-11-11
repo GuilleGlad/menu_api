@@ -50,12 +50,10 @@ export class AdminMenuSectionsService {
   }
 
   async reorderItems(sectionId: string, orderedItemIds: string[]) {
-    const section = await this.sectionsRepo.findOne({ where: { id: sectionId } });
-    if (!section) throw new NotFoundException('section_not_found');
     if (!Array.isArray(orderedItemIds) || orderedItemIds.length === 0) {
       throw new BadRequestException('empty_items');
     }
-    const items = await this.itemsRepo.find({ where: { id: In(orderedItemIds), section_id: sectionId } });
+    const items = await this.itemsRepo.find({ where: { id: In(orderedItemIds)} });
     if (items.length !== orderedItemIds.length) {
       throw new BadRequestException('mismatched_items');
     }

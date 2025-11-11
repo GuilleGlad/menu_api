@@ -22,11 +22,13 @@ import { AdminDataController } from './data.controller';
 import { AdminMenusService } from './menus.service';
 import { AdminMenuSectionsService } from './sections.service';
 import { SectionsAdminController } from './sections.controller';
+import { MenuItemsService } from './items.service';
+import { MenuItemSectionEntity } from '../entities/menu-item-section.entity';
 
 @Module({
   imports: [
     PublicModule,
-  TypeOrmModule.forFeature([UserEntity, RestaurantEntity, MenuEntity, MenuSectionEntity, MenuItemEntity]),
+  TypeOrmModule.forFeature([UserEntity, RestaurantEntity, MenuEntity, MenuSectionEntity, MenuItemEntity,MenuItemSectionEntity]),
     JwtModule.register({
       global: false,
       secret: process.env.ADMIN_JWT_SECRET || 'dev-admin-secret',
@@ -51,6 +53,7 @@ import { SectionsAdminController } from './sections.controller';
     AdminDataSeedService,
     AdminMenusService,
     AdminMenuSectionsService,
+    MenuItemsService,
   ],
 })
 export class AdminModule {}

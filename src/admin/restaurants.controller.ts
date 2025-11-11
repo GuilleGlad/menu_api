@@ -17,6 +17,8 @@ import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { AdminMenusService } from './menus.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
+import { CreateMenuItemDto } from './dto/create-menu-item.dto';
+import { MenuItemsService } from './items.service';
 
 @Controller({ path: 'admin', version: '1' })
 @UseGuards(AdminAuthGuard, RolesGuard)
@@ -24,6 +26,7 @@ export class RestaurantsAdminController {
   constructor(
     private readonly service: PublicService,
     private readonly menus: AdminMenusService,
+    private readonly items: MenuItemsService,
   ) {}
 
   @Get('restaurants')
@@ -73,5 +76,17 @@ export class RestaurantsAdminController {
   @Roles('admin')
   createMenu(@Param('id') id: string, @Body() body: CreateMenuDto) {
     return this.menus.createMenuForRestaurant(id, body);
+  }
+
+  @Get('restaurants/:id/items')
+  @Roles('admin')
+  listItemsByRestaurant(@Param('id') id: string) {
+    return this.items.listItemsByRestaurant(id);
+  }
+
+  @Post('restaurants/:id/items')
+  @Roles('admin')
+  createItem(@Param('id') id: string, @Body() body: CreateMenuItemDto) {
+    return this.items.createItemForRestaurant(id, body);
   }
 }
