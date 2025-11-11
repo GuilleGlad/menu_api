@@ -46,6 +46,22 @@ export class SectionsAdminController {
     return this.sections.reorderItems(id, body?.item_ids || []);
   }
 
+  @Post('sections/:section_id/items/:item_id')
+  @Roles('admin')
+  addItemToSection(@Param('section_id') sectionId: string, @Param('item_id') itemId: string) {
+    this.validateUuid(sectionId, 'section_id');
+    this.validateUuid(itemId, 'item_id');
+    return this.sections.addItemToSection(sectionId, itemId);
+  }
+
+  @Delete('sections/:section_id/items/:item_id')
+  @Roles('admin')
+  removeItemFromSection(@Param('section_id') sectionId: string, @Param('item_id') itemId: string) {
+    this.validateUuid(sectionId, 'section_id');
+    this.validateUuid(itemId, 'item_id');
+    return this.sections.removeItemFromSection(sectionId, itemId);
+  }
+
   private validateUuid(value: string, field: string) {
     const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     if (!uuidRegex.test(value)) throw new BadRequestException(`${field}_invalid`);

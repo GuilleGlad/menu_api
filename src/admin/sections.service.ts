@@ -6,13 +6,14 @@ import { MenuEntity } from '../entities/menu.entity';
 import { CreateMenuSectionDto } from './dto/create-menu-section.dto';
 import { UpdateMenuSectionDto } from './dto/update-menu-section.dto';
 import { MenuItemEntity } from '../entities/menu-item.entity';
-
+import { MenuItemSectionEntity } from 'src/entities/menu-item-section.entity';
 @Injectable()
 export class AdminMenuSectionsService {
   constructor(
     @InjectRepository(MenuSectionEntity) private readonly sectionsRepo: Repository<MenuSectionEntity>,
     @InjectRepository(MenuEntity) private readonly menusRepo: Repository<MenuEntity>,
     @InjectRepository(MenuItemEntity) private readonly itemsRepo: Repository<MenuItemEntity>,
+    @InjectRepository(MenuItemSectionEntity) private readonly itemSectionsRepo: Repository<MenuItemSectionEntity>,
   ) {}
 
   async createSection(menuId: string, dto: CreateMenuSectionDto) {
@@ -83,6 +84,40 @@ export class AdminMenuSectionsService {
       return sec;
     });
     await this.sectionsRepo.save(updates);
+    return { ok: true };
+  }
+
+  async addItemToSection(sectionId: string, itemId: string) {
+    const section = await this.sectionsRepo.createQueryBuilder('s')
+      .leftJoinAndSelect('s.menu', 'm')
+      .where('s.id = :sid', { sid: sectionId })
+      .getOne();
+    if (!section) throw new NotFoundException('section_not_found');
+
+    const item = await this.itemsRepo.findOne({ where: { id: itemId } });
+    if (!item) throw new NotFoundException('item_not_found');
+
+    // ensure item belongs to the same restaurant as the section's menu
+    if (!section.menu || section.menu.restaurant_id !== item.restaurant_id) {
+      throw new BadRequestException('item_not_in_restaurant');
+    }
+
+    // upsert link
+    const exists = await this.itemSectionsRepo.findOne({ where: { item_id: itemId, section_id: sectionId } });
+    if (exists) return { ok: true };
+
+    const link = this.itemSectionsRepo.create({ item_id: itemId, section_id: sectionId });
+    await this.itemSectionsRepo.save(link);
+    return { ok: true };
+  }
+
+  async removeItemFromSection(sectionId: string, itemId: string) {
+    const section = await this.sectionsRepo.findOne({ where: { id: sectionId } });
+    if (!section) throw new NotFoundException('section_not_found');
+    const item = await this.itemsRepo.findOne({ where: { id: itemId } });
+    if (!item) throw new NotFoundException('item_not_found');
+
+    await this.itemSectionsRepo.delete({ item_id: itemId, section_id: sectionId });
     return { ok: true };
   }
 }

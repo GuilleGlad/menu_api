@@ -25,11 +25,15 @@ import { SectionsAdminController } from './sections.controller';
 import { MenuItemsService } from './items.service';
 import { MenuItemSectionEntity } from '../entities/menu-item-section.entity';
 import { ItemsController } from './items.controller';
+import { TagEntity } from '../entities/tag.entity';
+import { RestaurantTagEntity } from '../entities/restaurant-tag.entity';
+import { TagsAdminService } from './tags.service';
+import { TagsAdminController } from './tags.controller';
 
 @Module({
   imports: [
     PublicModule,
-  TypeOrmModule.forFeature([UserEntity, RestaurantEntity, MenuEntity, MenuSectionEntity, MenuItemEntity,MenuItemSectionEntity]),
+  TypeOrmModule.forFeature([UserEntity, RestaurantEntity, MenuEntity, MenuSectionEntity, MenuItemEntity, MenuItemSectionEntity, TagEntity, RestaurantTagEntity]),
     JwtModule.register({
       global: false,
       secret: process.env.ADMIN_JWT_SECRET || 'dev-admin-secret',
@@ -44,6 +48,7 @@ import { ItemsController } from './items.controller';
     AdminDataController,
     SectionsAdminController,
     ItemsController,
+    TagsAdminController,
   ],
   providers: [
     AdminAuthGuard,
@@ -56,6 +61,7 @@ import { ItemsController } from './items.controller';
     AdminMenusService,
     AdminMenuSectionsService,
     MenuItemsService,
+    TagsAdminService,
   ],
 })
 export class AdminModule {}
