@@ -43,6 +43,7 @@ export class MenuItemsService {
                     name: dto.name,
                     description: dto.description ?? null,
                     sort_order: dto.sort_order ?? 0,
+                    base_price: dto.base_price ? dto.base_price : 0,
                     currency_code: dto.currency_code ?? 'USD',
                     is_available: dto.is_available ?? true,
                     restaurant_id: restaurantId,
@@ -56,5 +57,32 @@ export class MenuItemsService {
             });
             await this.itemSectionsRepo.save(link);
             return saved;
+    }
+
+    async getItemById(id: string) {
+        const item = await this.itemsRepo.findOne({ where: { id } });
+        if (!item) throw new NotFoundException('item_not_found');
+        return item;
+    }
+
+    async updateItem(id: string, dto: CreateMenuItemDto) {
+        const item = await this.itemsRepo.findOne({ where: { id } });
+        console.log(item);
+        if (!item) throw new NotFoundException('item_not_found');
+        if(dto.name !== undefined) item.name = dto.name;
+        if(dto.description !== undefined) item.description = dto.description ?? null;
+        if(dto.sort_order !== undefined) item.sort_order = dto.sort_order;
+        if(dto.base_price !== undefined) item.base_price = dto.base_price;
+        if(dto.currency_code !== undefined) item.currency_code = dto.currency_code;
+        if(dto.is_available !== undefined) item.is_available = dto.is_available;
+        console.log(item);
+        return this.itemsRepo.save(item);
+    }
+
+    async deleteItem(id: string) {
+        const item = await this.itemsRepo.findOne({ where: { id } });
+        if (!item) throw new NotFoundException('item_not_found');
+        await this.itemsRepo.delete(id);
+        return { ok: true };
     }
 }

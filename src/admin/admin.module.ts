@@ -24,6 +24,7 @@ import { AdminMenuSectionsService } from './sections.service';
 import { SectionsAdminController } from './sections.controller';
 import { MenuItemsService } from './items.service';
 import { MenuItemSectionEntity } from '../entities/menu-item-section.entity';
+import { ItemsController } from './items.controller';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { MenuItemSectionEntity } from '../entities/menu-item-section.entity';
     AdminAuthController,
     AdminDataController,
     SectionsAdminController,
+    ItemsController,
   ],
   providers: [
     AdminAuthGuard,

@@ -15,6 +15,9 @@ export class MenuItemEntity {
   @Column({ name: 'description', type: 'text', nullable: true })
   description!: string | null;
 
+  @Column({ name: 'base_price', type: 'integer', default: 0 })
+  base_price!: number;
+
   @Column({ name: "currency_code", type: "char", length: 3})
   currency_code!: string;
 
