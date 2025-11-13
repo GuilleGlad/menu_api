@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
+import { TaxRateEntity } from 'src/entities/tax-rate.entity';
 
 @Injectable()
 export class UsersAdminService {
   private readonly logger = new Logger(UsersAdminService.name);
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly usersRepo: Repository<UserEntity>,
+    @InjectRepository(UserEntity) private readonly usersRepo: Repository<UserEntity>,
   ) {}
 
   async seedAdmins() {

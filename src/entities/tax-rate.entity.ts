@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { RestaurantEntity } from './restaurant.entity';
+import { MenuItemEntity } from './menu-item.entity';
 
 @Entity('tax_rates')
 export class TaxRateEntity {
@@ -22,4 +24,10 @@ export class TaxRateEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   valid_to!: Date | null;
+
+  @OneToOne(() => RestaurantEntity, (restaurant) => restaurant.id)
+  restaurant?: RestaurantEntity;
+
+  @OneToMany(() => MenuItemEntity, (item) => item.id)
+  menu_items?: MenuItemEntity[];
 }

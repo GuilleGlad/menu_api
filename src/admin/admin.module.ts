@@ -33,11 +33,14 @@ import { TagsAdminController } from './tags.controller';
 import { AvailabilityRuleEntity } from '../entities/availability-rule.entity';
 import { AvailabilityAdminService } from './availability.service';
 import { AvailabilityAdminController } from './availability.controller';
+import { TaxController } from './tax.controller';
+import { TaxService } from './tax.service';
+import { TaxRateEntity } from 'src/entities/tax-rate.entity';
 
 @Module({
   imports: [
     PublicModule,
-  TypeOrmModule.forFeature([UserEntity, RestaurantEntity, MenuEntity, MenuSectionEntity, MenuItemEntity, MenuItemSectionEntity, TagEntity, ItemTagEntity, RestaurantTagEntity, AvailabilityRuleEntity]),
+  TypeOrmModule.forFeature([UserEntity, RestaurantEntity, MenuEntity, MenuSectionEntity, MenuItemEntity, MenuItemSectionEntity, TagEntity, ItemTagEntity, RestaurantTagEntity, AvailabilityRuleEntity, TaxRateEntity]),
     JwtModule.register({
       global: false,
       secret: process.env.ADMIN_JWT_SECRET || 'dev-admin-secret',
@@ -54,6 +57,7 @@ import { AvailabilityAdminController } from './availability.controller';
     ItemsController,
     TagsAdminController,
     AvailabilityAdminController,
+    TaxController,
   ],
   providers: [
     AdminAuthGuard,
@@ -68,6 +72,7 @@ import { AvailabilityAdminController } from './availability.controller';
     MenuItemsService,
     TagsAdminService,
     AvailabilityAdminService,
+    TaxService,
   ],
 })
 export class AdminModule {}
