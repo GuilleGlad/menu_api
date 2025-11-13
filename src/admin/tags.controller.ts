@@ -23,6 +23,12 @@ export class TagsAdminController {
     return this.service.createRestaurantTag(restaurantId, body.code ?? null, body.name);
   }
 
+  @Post('items/:item_id/tags/:tag_id')
+  @Roles('admin')
+  addTagToItem(@Param('item_id') itemId: string, @Param('tag_id') tagId: string) {
+    return this.service.addTagToItem(itemId, tagId);
+  }
+
   @Patch('tags/:tag_id')
   @Roles('admin')
   updateTag(@Param('tag_id') tagId: string, @Body() body: UpdateTagDto) {
@@ -33,5 +39,11 @@ export class TagsAdminController {
   @Roles('admin')
   deleteTag(@Param('tag_id') tagId: string) {
     return this.service.deleteTag(tagId);
+  }
+
+  @Delete('items/:item_id/tags/:tag_id')
+  @Roles('admin')
+  removeTagFromItem(@Param('item_id') itemId: string, @Param('tag_id') tagId: string) {
+    return this.service.removeTagFromItem(itemId, tagId);
   }
 }

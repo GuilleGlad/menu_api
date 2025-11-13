@@ -52,6 +52,23 @@ CREATE TABLE IF NOT EXISTS menus (
   published_at     TIMESTAMPTZ
 );
 
+-- Item tags: link table for items to tags (stores tag id UUID if available)
+CREATE TABLE IF NOT EXISTS item_tags (
+    item_id uuid NOT NULL,
+    tag_id uuid NOT NULL,
+    CONSTRAINT item_tags_pkey PRIMARY KEY (item_id, tag_id),
+    CONSTRAINT item_tags_item_id_fkey FOREIGN KEY (item_id)
+        REFERENCES public.menu_items (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT item_tags_tag_id_fkey FOREIGN KEY (tag_id)
+        REFERENCES public.tags (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_item_tags_item_id ON item_tags(item_id);
+
 -- Indexes (optional performance helpers)
 CREATE INDEX IF NOT EXISTS idx_menus_restaurant_slug ON menus(restaurant_slug);
 CREATE INDEX IF NOT EXISTS idx_restaurant_tags_slug ON restaurant_tags(restaurant_slug);
@@ -84,3 +101,20 @@ COMMIT;
 INSERT INTO users (username, email, password_hash, role)
 VALUES ('owner', 'owner@test.com', 'owner123', 'admin')
 ON CONFLICT (email) DO NOTHING;
+
+-- Availability rules table (idempotent create)
+BEGIN;
+CREATE TABLE IF NOT EXISTS availability_rules (
+  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  restaurant_id  UUID NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
+  name           VARCHAR(255),
+  dow            INTEGER,
+  start_min      INTEGER NOT NULL DEFAULT 0,
+  end_min        INTEGER NOT NULL DEFAULT 1440,
+  start_date     DATE,
+  end_date       DATE,
+  is_closed      BOOLEAN NOT NULL DEFAULT FALSE,
+  sort_order     INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_availability_rules_restaurant ON availability_rules(restaurant_id);
+COMMIT;

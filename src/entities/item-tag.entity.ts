@@ -1,17 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
 import { MenuItemEntity } from './menu-item.entity';
 import { TagEntity } from './tag.entity';
 
 @Entity('item_tags')
-@Index(['item_id', 'tag_id'], { unique: true })
 export class ItemTagEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
-
-  @Column({ type: 'uuid' })
+  // Composite primary key: (item_id, tag_id)
+  @PrimaryColumn('uuid')
   item_id!: string;
 
-  @Column({ type: 'uuid' })
+  @PrimaryColumn('uuid')
   tag_id!: string;
 
   @ManyToOne(() => MenuItemEntity, { onDelete: 'CASCADE' })

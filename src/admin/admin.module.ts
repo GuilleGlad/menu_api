@@ -27,13 +27,17 @@ import { MenuItemSectionEntity } from '../entities/menu-item-section.entity';
 import { ItemsController } from './items.controller';
 import { TagEntity } from '../entities/tag.entity';
 import { RestaurantTagEntity } from '../entities/restaurant-tag.entity';
+import { ItemTagEntity } from '../entities/item-tag.entity';
 import { TagsAdminService } from './tags.service';
 import { TagsAdminController } from './tags.controller';
+import { AvailabilityRuleEntity } from '../entities/availability-rule.entity';
+import { AvailabilityAdminService } from './availability.service';
+import { AvailabilityAdminController } from './availability.controller';
 
 @Module({
   imports: [
     PublicModule,
-  TypeOrmModule.forFeature([UserEntity, RestaurantEntity, MenuEntity, MenuSectionEntity, MenuItemEntity, MenuItemSectionEntity, TagEntity, RestaurantTagEntity]),
+  TypeOrmModule.forFeature([UserEntity, RestaurantEntity, MenuEntity, MenuSectionEntity, MenuItemEntity, MenuItemSectionEntity, TagEntity, ItemTagEntity, RestaurantTagEntity, AvailabilityRuleEntity]),
     JwtModule.register({
       global: false,
       secret: process.env.ADMIN_JWT_SECRET || 'dev-admin-secret',
@@ -49,6 +53,7 @@ import { TagsAdminController } from './tags.controller';
     SectionsAdminController,
     ItemsController,
     TagsAdminController,
+    AvailabilityAdminController,
   ],
   providers: [
     AdminAuthGuard,
@@ -62,6 +67,7 @@ import { TagsAdminController } from './tags.controller';
     AdminMenuSectionsService,
     MenuItemsService,
     TagsAdminService,
+    AvailabilityAdminService,
   ],
 })
 export class AdminModule {}

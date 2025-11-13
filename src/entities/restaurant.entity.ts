@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AvailabilityRuleEntity } from './availability-rule.entity';
 
 @Entity('restaurants')
 export class RestaurantEntity {
@@ -31,4 +33,7 @@ export class RestaurantEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at!: Date;
+
+  @OneToMany(() => AvailabilityRuleEntity, (rule) => rule.restaurant_id)
+  availability_rules?: AvailabilityRuleEntity[];
 }

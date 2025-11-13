@@ -1,24 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
-import { RestaurantEntity } from './restaurant.entity';
-import { TagEntity } from './tag.entity';
+import { Entity, PrimaryColumn } from 'typeorm';
 
+/**
+ * The `restaurant_tags` table in the database stores simple string tags per-restaurant.
+ * Schema: restaurant_tags(restaurant_slug varchar, tag varchar)
+ * This entity maps that table as a composite primary key of (restaurant_slug, tag).
+ * Note: there is no tag_id foreign key in the DB schema; the `tag` column stores the
+ * tag name. Do not add relation mappings here.
+ */
 @Entity('restaurant_tags')
-@Index(['restaurant_id', 'tag_id'], { unique: true })
 export class RestaurantTagEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  @PrimaryColumn({ name: 'restaurant_slug', type: 'varchar' })
+  restaurant_slug!: string;
 
-  @Column({ type: 'uuid' })
-  restaurant_id!: string;
-
-  @Column({ type: 'uuid' })
-  tag_id!: string;
-
-  @ManyToOne(() => RestaurantEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'restaurant_id' })
-  restaurant?: RestaurantEntity;
-
-  @ManyToOne(() => TagEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'tag_id' })
-  tag?: TagEntity;
+  @PrimaryColumn({ name: 'tag', type: 'varchar' })
+  tag!: string;
 }
